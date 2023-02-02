@@ -126,7 +126,10 @@ class Cropper
         $filterName = filter_var(mb_strtolower(pathinfo($name)["filename"]), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $formats = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜüÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿRr"!@#$%&*()_-+={[}]/?;:.,\\\'<>°ºª';
         $replace = 'aaaaaaaceeeeiiiidnoooooouuuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyrr                                 ';
-        $trimName = trim(strtr(utf8_decode($filterName), utf8_decode($formats), $replace));
+        //RFC: Deprecate and Remove utf8_encode and utf8_decode - https://wiki.php.net/rfc/remove_utf8_decode_and_utf8_encode
+        //$trimName = trim(strtr(utf8_decode($filterName), utf8_decode($formats), $replace));
+        // Fix Code
+        $trimName = trim(strtr(mb_convert_encoding($filterName, "UTF-8", mb_detect_encoding($filterName)), mb_convert_encoding($formats, "UTF-8", mb_detect_encoding($formats)), $replace));
         $name = str_replace(["-----", "----", "---", "--"], "-", str_replace(" ", "-", $trimName));
 
         $hash = $this->hash($this->imagePath);
